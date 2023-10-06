@@ -101,6 +101,8 @@ plt.xlabel("Packet #")
 plt.ylabel("Delay in S")
 plt.title("Delay Packets Experience in a System with a Service Time of 8p/s")
 
+'''
+
 delay6 = singleSrvSim(serviceTime6)
 plt.subplot(2,1,2)
 plt.bar(np.arange(len(delay6)), delay6)
@@ -114,6 +116,11 @@ plt.bar(np.arange(len(delay3)), delay3)
 plt.xlabel("Packet #")
 plt.ylabel("Delay in S")
 plt.title("Delay Packets Experience in a System with a Service Time of 3p/s")
+
+
+
+'''
+
 
 plt.show()
 
