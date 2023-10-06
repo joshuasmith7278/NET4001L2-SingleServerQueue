@@ -1,112 +1,122 @@
 from matplotlib import pyplot as plt
+import numpy as np
+
 
 intArrivalTimes = open('interArrivals.txt', 'r')
 serviceTime8 = open('serviceTimesMu8.txt', 'r')
+serviceTime6 = open('serviceTimesMu6.txt', 'r')
+serviceTime3 = open('serviceTimesMu3.txt', 'r')
 
-#intArr = inter arrival time = ri
-#THis is GIVEN from txt file
-intArr = []
+def singleSrvSim(serviceTimes):
 
-#srvTime = service time = si
-#This is GIVEN from txt file
-srvTime = []
+    #intArr = inter arrival time = ri
+    intArr = []
 
-for line in serviceTime8:
-    srvTime.append(float(line.rstrip()))
+    #srvTime = service time = si
+    srvTime = []
 
+    totPackets = 0
 
-#arrClockTime = the time at when the packet arrives = ai
-# ai = ri + ai-1
-# a2 = r2 + a1
-# a1 = 0
-arrClockTime = []
-
-#delayExp = the delay experience in queue = di
-# d1 = 0
-# no delay on first packet because there are no previous packets 
-# if (ai > ci-1) di = 0
-# else( di = di-1 + si-1 - ri)
-delayExp = []
-
-#deptClockTime = the time when the packet finishes being served = ci
-# ci = ai + wi
-deptClockTime = []
-
-#totWaitTime = total time a packet waits to be completed = wi
-# wi = si + di
-totWaitTime = []
+    for line in serviceTimes:
+        srvTime.append(float(line.rstrip()))
+        totPackets +=1
 
 
-#For PACKET 1
-#Inter arrival time (r1) = 0
-#Arrive clock time (a1) = 0
-#Queuing Delay (d1) = 0
-#Total Wait (w1) = Service Time (si)
-#Departure time (c1) = Arrival time (a1) + serivce time (s1)
-delayExp.append(0)
-arrClockTime.append(0)
-intArr.append(0)
-totWaitTime.append(srvTime[0] + delayExp[0])
-deptClockTime.append(arrClockTime[0] + totWaitTime[0])
+    #arrClockTime = the time at when the packet arrives = ai
+    arrClockTime = []
+
+    #delayExp = the delay experience in queue = di
+    delayExp = []
+    numDelayPackets = 0
+
+    #deptClockTime = the time when the packet finishes being served = ci
+    deptClockTime = []
+
+    #totWaitTime = total time a packet waits to be completed = wi
+    totWaitTime = []
 
 
-cumsum = 0
+    #For PACKET 1
+    #Inter arrival time (r1) = 0
+    #Arrive clock time (a1) = 0
+    #Queuing Delay (d1) = 0
+    #Total Wait (w1) = Service Time (si)
+    #Departure time (c1) = Arrival time (a1) + serivce time (s1)
+    delayExp.append(0)
+    arrClockTime.append(0)
+    intArr.append(0)
+    totWaitTime.append(srvTime[0] + delayExp[0])
+    deptClockTime.append(arrClockTime[0] + totWaitTime[0])
 
-for line in intArrivalTimes:
-    intArr.append(float(line.rstrip()))
-    cumsum += float(line)
-    arrClockTime.append(cumsum)
 
-    
+    cumsum = 0
 
+    for line in intArrivalTimes:
+        intArr.append(float(line.rstrip()))
+        cumsum += float(line)
+        arrClockTime.append(cumsum)
 
-
-
-for i in range(1, len(srvTime)):
-    if(arrClockTime[i] >= deptClockTime[i-1]):
-        #print("\nPacket " + str(i-1) + " departs at " + str(deptClockTime[i-1]))
-        #print("Packet " + str(i) + " arrives at " + str(arrClockTime[i]))
-        delay = 0
-
-    else:
-        #print("\nPacket " + str(i-1) + " departs at " + str(deptClockTime[i-1]))
-        #print("Packet " + str(i) + " arrives at " + str(arrClockTime[i]))
-        delay = delayExp[i-1] + srvTime[i-1] - intArr[i]
-        #print("Packet " + str(i-1) + " DELAYED " + str(delayExp[i-1]) +  " + SERVED " + str(srvTime[i-1]) + " - ARRIVAL of next " +str(intArr[i]))
         
-    
-    #print("\nDELAY AMOUNT for Packet " + str(i + 1))
-    #print(delay)
-    delayExp.append(delay)
-    totWaitTime.append(srvTime[i] + delayExp[i])
-    deptClockTime.append(arrClockTime[i] + totWaitTime[i])
 
-    
-'''
-print("Packets 1 - 5 Ai \n")
-print(arrClockTime[:10])
+    for i in range(1, len(srvTime)):
+        #If CURR Packet arrives after the PREV packet leaves, there will be no delay
+        if(arrClockTime[i] >= deptClockTime[i-1]):
+            delay = 0
 
-print("\nPackets 1 - 5 Si \n")
-print(srvTime[:10])
+        #Else, the CURR packet arrives before the PREV packet leaves, there will be delay
+        else:
+            #The delay for CURR packet is equal to the TOT WAIT of PREV packet - the interArrival time of CURR packet
+            delay = delayExp[i-1] + srvTime[i-1] - intArr[i]
+            numDelayPackets += 1
+            
+        #print("\nDELAY AMOUNT for Packet " + str(i + 1))
+        #print(delay)
+        delayExp.append(delay)
+        totWaitTime.append(srvTime[i] + delayExp[i])
+        deptClockTime.append(arrClockTime[i] + totWaitTime[i])
 
-print("\nPackets 1 - 5 Di \n")
-print(delayExp[:10])
+    # Sum of Delay experienced / Number of packets that experience delay
+    print("Average Queuing Delay (seconds / packet):")
+    totDelay = sum(delayExp)
+    print(totDelay / numDelayPackets)
 
-print("\n Packets 1 - 5 Wi \n")
-print(totWaitTime[:10])
+    #Sum of time packets are in system / Number of packets that are in system
+    print("\nAverage time a packet spends in the system:")
+    waitTime = sum(totWaitTime)
+    print(waitTime / len(totWaitTime))
+            
+    #Number of packets that experience delay / Number of packets in the system
+    print("\nProbability a Packet will wait in the system:")
+    print(numDelayPackets / totPackets)
 
-print("\nPackets 1 - 5 Ci \n")
-print(deptClockTime[:10])
 
-'''
+    print("\nAverage number of packets in the system:")
+    return delayExp
 
 
-for i in range(len(delayExp)):
-    plt.bar(i, delayExp[i])
-
+delay8 = singleSrvSim(serviceTime8)
+plt.subplot(2,1,1)
+plt.bar(np.arange(len(delay8)), delay8)
 plt.xlabel("Packet #")
 plt.ylabel("Delay in S")
+plt.title("Delay Packets Experience in a System with a Service Time of 8p/s")
+
+delay6 = singleSrvSim(serviceTime6)
+plt.subplot(2,1,2)
+plt.bar(np.arange(len(delay6)), delay6)
+plt.xlabel("Packet #")
+plt.ylabel("Delay in S")
+plt.title("Delay Packets Experience in a System with a Service Time of 6p/s")
+
+delay3 = singleSrvSim(serviceTime3)
+plt.subplot(2,1,3)
+plt.bar(np.arange(len(delay3)), delay3)
+plt.xlabel("Packet #")
+plt.ylabel("Delay in S")
+plt.title("Delay Packets Experience in a System with a Service Time of 3p/s")
+
 plt.show()
 
-print("GRAPHS")
+
+
 
