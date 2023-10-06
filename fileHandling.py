@@ -2,16 +2,17 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 
-intArrivalTimes = open('interArrivals.txt', 'r')
+
 serviceTime8 = open('serviceTimesMu8.txt', 'r')
 serviceTime6 = open('serviceTimesMu6.txt', 'r')
 serviceTime3 = open('serviceTimesMu3.txt', 'r')
 
+
 def singleSrvSim(serviceTimes):
+    intArrivalTimes = open('interArrivals.txt', 'r')
 
     #intArr = inter arrival time = ri
     intArr = []
-
     #srvTime = service time = si
     srvTime = []
 
@@ -51,13 +52,13 @@ def singleSrvSim(serviceTimes):
 
     cumsum = 0
 
+    
     for line in intArrivalTimes:
         intArr.append(float(line.rstrip()))
         cumsum += float(line)
         arrClockTime.append(cumsum)
 
         
-
     for i in range(1, len(srvTime)):
         #If CURR Packet arrives after the PREV packet leaves, there will be no delay
         if(arrClockTime[i] >= deptClockTime[i-1]):
@@ -76,7 +77,7 @@ def singleSrvSim(serviceTimes):
         deptClockTime.append(arrClockTime[i] + totWaitTime[i])
 
     # Sum of Delay experienced / Number of packets that experience delay
-    print("Average Queuing Delay (seconds / packet):")
+    print("\nAverage Queuing Delay (seconds / packet):")
     totDelay = sum(delayExp)
     print(totDelay / numDelayPackets)
 
@@ -95,31 +96,30 @@ def singleSrvSim(serviceTimes):
 
 
 delay8 = singleSrvSim(serviceTime8)
-plt.subplot(2,1,1)
+
+delay6 = singleSrvSim(serviceTime6)
+
+delay3 = singleSrvSim(serviceTime3)
+
+plt.subplot(3,1,1)
 plt.bar(np.arange(len(delay8)), delay8)
 plt.xlabel("Packet #")
 plt.ylabel("Delay in S")
 plt.title("Delay Packets Experience in a System with a Service Time of 8p/s")
 
-'''
 
-delay6 = singleSrvSim(serviceTime6)
-plt.subplot(2,1,2)
+plt.subplot(3,1,2)
 plt.bar(np.arange(len(delay6)), delay6)
 plt.xlabel("Packet #")
 plt.ylabel("Delay in S")
 plt.title("Delay Packets Experience in a System with a Service Time of 6p/s")
 
-delay3 = singleSrvSim(serviceTime3)
-plt.subplot(2,1,3)
+
+plt.subplot(3,1,3)
 plt.bar(np.arange(len(delay3)), delay3)
 plt.xlabel("Packet #")
 plt.ylabel("Delay in S")
 plt.title("Delay Packets Experience in a System with a Service Time of 3p/s")
-
-
-
-'''
 
 
 plt.show()
