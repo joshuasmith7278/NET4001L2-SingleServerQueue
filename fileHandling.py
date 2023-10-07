@@ -105,21 +105,21 @@ plt.subplot(3,1,1)
 plt.bar(np.arange(len(delay8)), delay8)
 plt.xlabel("Packet #")
 plt.ylabel("Delay in S")
-plt.title("Delay Packets Experience in a System with a Service Time of 8p/s")
+plt.title("Delay Packets Experienced with a Service Time of 8p/s")
 
 
 plt.subplot(3,1,2)
 plt.bar(np.arange(len(delay6)), delay6)
 plt.xlabel("Packet #")
 plt.ylabel("Delay in S")
-plt.title("Delay Packets Experience in a System with a Service Time of 6p/s")
+plt.title("Delay Packets Experienced with a Service Time of 6p/s")
 
 
 plt.subplot(3,1,3)
 plt.bar(np.arange(len(delay3)), delay3)
 plt.xlabel("Packet #")
 plt.ylabel("Delay in S")
-plt.title("Delay Packets Experience in a System with a Service Time of 3p/s")
+plt.title("Delay Packets Experienced with a Service Time of 3p/s")
 
 
 plt.show()
