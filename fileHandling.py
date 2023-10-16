@@ -92,13 +92,22 @@ def singleSrvSim(serviceTimes):
 
 
     print("\nAverage number of packets in the system:")
+    #Sum of service time experienced by packets
+    #Sum of delay experienced by packets
+    #The last packet finishes being served (or total time system is running)
+    print((sum(delayExp) + sum(srvTime)) / deptClockTime[len(deptClockTime)-1])
+    
     return delayExp
 
 
+
+print("\n\n ----- Server Simulation for Mu 8 -----")
 delay8 = singleSrvSim(serviceTime8)
 
+print("\n\n ----- Server Simulation for Mu 6 -----")
 delay6 = singleSrvSim(serviceTime6)
 
+print("\n\n ----- Server Simulation for Mu 3 -----")
 delay3 = singleSrvSim(serviceTime3)
 
 plt.subplot(3,1,1)
